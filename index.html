@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>GameProfile Analyzer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial; }
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
+  overflow: hidden;
+}
+.subtitle {
+  font-size: 20px;
+  opacity: 0.7;
+}
+
+.screen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden { display: none; }
+
+.container {
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  padding: 30px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 30px rgba(0,0,0,0.3);
+  animation: fadeIn 0.6s ease;
+}
+
+h1 { margin-bottom: 15px; }
+p { margin-bottom: 15px; opacity: 0.9; }
+
+.btn {
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  color: white;
+  width: 100%;
+  cursor: pointer;
+}
+
+.btn-danger {
+  background: linear-gradient(90deg, #ff416c, #ff4b2b);
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: none;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  width: 0%;
+  background: #00c6ff;
+}
+
+/* REVELACIÓN */
+.reveal {
+  background: linear-gradient(135deg, #200000, #3a0000, #000);
+}
+
+.data-box {
+  text-align: left;
+  background: rgba(255,255,255,0.08);
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.tip {
+  margin-top: 10px;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 1 -->
+<div id="screen1" class="screen">
+  <div class="container">
+    <h1>¿Tu información está protegida?<h1>
+    <p class="subtitle">Analizamos tu perfil en segundos</p>
+    <button class="btn" onclick="startAnalysis()">Empezar</button>
+  </div>
+</div>
+
+<!-- 2 -->
+<div id="screen2" class="screen hidden">
+  <div class="container">
+    <h1>Analizando...</h1>
+    <div class="progress-bar"><div class="progress" id="progress"></div></div>
+  </div>
+</div>
+
+<!-- 3 -->
+<div id="screen3" class="screen hidden">
+  <div class="container">
+    <h1>Completa tu perfil</h1>
+    <input id="name" placeholder="Nombre">
+    <input id="email" placeholder="Email">
+    <input id="age" placeholder="Edad">
+    <button class="btn" onclick="goToPermissions()">Continuar</button>
+  </div>
+</div>
+
+<!-- 4 -->
+<div id="screen4" class="screen hidden">
+  <div class="container">
+    <h1>Permisos</h1>
+    <p>Necesitamos acceso para mejorar resultados</p>
+    <button class="btn" onclick="showResult()">Permitir todo</button>
+  </div>
+</div>
+
+<!-- 5 RESULTADO -->
+<div id="screen5" class="screen hidden">
+  <div class="container">
+    <h1>Resultado listo</h1>
+    <p>Sos un gamer estratégico competitivo</p>
+    <button class="btn" onclick="reveal()">Ver análisis completo</button>
+  </div>
+</div>
+
+<!-- 6 REVELACIÓN -->
+<div id="screen6" class="screen hidden reveal">
+  <div class="container">
+    <h1>⚠️ Esto no era un test</h1>
+
+    <p>
+      Acabás de compartir datos personales con una app desconocida.
+    </p>
+
+    <div class="data-box" id="userData"></div>
+
+    <p class="tip">
+      En una situación real, esta información podría ser usada para acceder a tus cuentas.
+    </p>
+
+    <button class="btn-danger" onclick="location.reload()">
+      Entendido
+    </button>
+  </div>
+</div>
+
+<script>
+
+let userData = {};
+
+function startAnalysis(){
+  screen1.classList.add("hidden");
+  screen2.classList.remove("hidden");
+
+  let p = 0;
+  const bar = document.getElementById("progress");
+
+  const i = setInterval(()=>{
+    p += 10;
+    bar.style.width = p+"%";
+
+    if(p>=100){
+      clearInterval(i);
+      setTimeout(()=>{
+        screen2.classList.add("hidden");
+        screen3.classList.remove("hidden");
+      },500);
+    }
+  },200);
+}
+
+function goToPermissions(){
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const age = document.getElementById("age").value.trim();
+
+  if(!name || !email || !age){
+    alert("Completá los datos");
+    return;
+  }
+
+  userData = { name, email, age };
+
+  screen3.classList.add("hidden");
+  screen4.classList.remove("hidden");
+}
+
+function showResult(){
+  screen4.classList.add("hidden");
+  screen5.classList.remove("hidden");
+}
+
+function reveal(){
+  screen5.classList.add("hidden");
+  screen6.classList.remove("hidden");
+
+  document.body.classList.add("reveal");
+
+  document.getElementById("userData").innerHTML = `
+    Nombre: ${userData.name}<br>
+    Email: ${userData.email}<br>
+    Edad: ${userData.age}
+  `;
+}
+
+</script>
+
+</body>
+</html>
+```
